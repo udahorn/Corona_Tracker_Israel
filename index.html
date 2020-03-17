@@ -1,0 +1,749 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="initial-scale=1,user-scalable=no,maximum-scale=1,width=device-width">
+        <meta name="mobile-web-app-capable" content="yes">
+        <meta name="apple-mobile-web-app-capable" content="yes">
+        <link rel="stylesheet" href="css/leaflet.css">
+        <link rel="stylesheet" href="css/qgis2web.css"><link rel="stylesheet" href="css/fontawesome-all.min.css">
+        <link rel="stylesheet" href="css/filter.css">
+		
+<link rel="stylesheet" href="css/nouislider.min.css">
+        <link rel="stylesheet" href="css/leaflet-control-geocoder.Geocoder.css">
+        <link rel="stylesheet" href="css/leaflet-measure.css">
+		<link rel="stylesheet" href="css/L.Control.Window.css" />
+        <link rel="stylesheet" href="css/leaflet-control-credits.css" />
+        <style>
+        html, body, #map {
+            width: 100%;
+            height: 100%;
+            padding: 0;
+            margin: 0;
+        }
+		
+        </style>
+        <title></title>
+    </head>
+    <body>
+        <div id="map">
+        </div>
+        <script src="js/qgis2web_expressions.js"></script>
+        <script src="js/leaflet.js"></script>
+        <script src="js/leaflet.rotatedMarker.js"></script>
+        <script src="js/leaflet.pattern.js"></script>
+        <script src="js/leaflet-hash.js"></script>
+        <script src="js/Autolinker.min.js"></script>
+        <script src="js/rbush.min.js"></script>
+        <script src="js/labelgun.min.js"></script>
+        <script src="js/labels.js"></script>
+        <script src="js/leaflet-control-geocoder.Geocoder.js"></script>
+        <script src="js/leaflet-measure.js"></script>
+        <script src="js/tailDT.js"></script>
+		<script src="js/leaflet-control-credits.js"></script>
+<script src="js/nouislider.min.js"></script>
+<script src="js/wNumb.js"></script>
+        <script src="data/israel_coronatracker_1.js"></script>
+        <script>
+        var highlightLayer;
+        function highlightFeature(e) {
+            highlightLayer = e.target;
+            highlightLayer.openPopup();
+        }
+        var map = L.map('map', {
+            zoomControl:true, maxZoom:28, minZoom:1
+        }).fitBounds([[31.396501182025435,34.18504456988953],[32.72012283452558,36.037108327]]);
+        var hash = new L.Hash(map);
+        map.attributionControl.setPrefix('<a href="https://github.com/tomchadwin/qgis2web" target="_blank">qgis2web</a> &middot; <a href="https://leafletjs.com" title="A JS library for interactive maps">Leaflet</a> &middot; <a href="http://www.geoint.co.il">Crated by yehuda horn</a>&middot; <a href="https://qgis.org">QGIS</a>');
+        var measureControl = new L.Control.Measure({
+            position: 'topleft',
+            primaryLengthUnit: 'meters',
+            secondaryLengthUnit: 'kilometers',
+            primaryAreaUnit: 'sqmeters',
+            secondaryAreaUnit: 'hectares'
+        });
+        measureControl.addTo(map);
+        document.getElementsByClassName('leaflet-control-measure-toggle')[0]
+        .innerHTML = '';
+        document.getElementsByClassName('leaflet-control-measure-toggle')[0]
+        .className += ' fas fa-ruler';
+        var bounds_group = new L.featureGroup([]);
+        function setBounds() {
+        }
+        var layer_OSMStandard_0 = L.tileLayer('http://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            opacity: 1.0,
+            attribution: '<a href="https://www.openstreetmap.org/copyright">© OpenStreetMap contributors, CC-BY-SA</a>',
+            minZoom: 1,
+            maxZoom: 28,
+            minNativeZoom: 0,
+            maxNativeZoom: 19
+        });
+        layer_OSMStandard_0;
+        map.addLayer(layer_OSMStandard_0);
+        function pop_israel_coronatracker_1(feature, layer) {
+            layer.on({
+                mouseout: function(e) {
+                    if (typeof layer.closePopup == 'function') {
+                        layer.closePopup();
+                    } else {
+                        layer.eachLayer(function(feature){
+                            feature.closePopup()
+                        });
+                    }
+                },
+                mouseover: highlightFeature,
+            });
+            var popupContent = '<table>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['Comments'] !== null ? Autolinker.link(feature.properties['Comments'].toLocaleString(), {truncate: {length: 30, location: 'smart'}}) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2"><strong>Place</strong><br />' + (feature.properties['Place'] !== null ? Autolinker.link(feature.properties['Place'].toLocaleString(), {truncate: {length: 30, location: 'smart'}}) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['name'] !== null ? Autolinker.link(feature.properties['name'].toLocaleString(), {truncate: {length: 30, location: 'smart'}}) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['type'] !== null ? Autolinker.link(feature.properties['type'].toLocaleString(), {truncate: {length: 30, location: 'smart'}}) : '') + '</td>\
+                    </tr>\
+                </table>';
+            layer.bindPopup(popupContent, {maxHeight: 400});
+        }
+
+        function style_israel_coronatracker_1_0(feature) {
+            switch(String(feature.properties['type'])) {
+                case 'אוניברסיטה':
+                    return {
+                pane: 'pane_israel_coronatracker_1',
+                radius: 7.0,
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1,
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(166,29,224,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'אירועים':
+                    return {
+                pane: 'pane_israel_coronatracker_1',
+                radius: 7.0,
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1,
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(207,105,65,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'אצטדיון':
+                    return {
+                pane: 'pane_israel_coronatracker_1',
+                radius: 7.0,
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1,
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(92,81,238,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'אתר תיירות':
+                    return {
+                pane: 'pane_israel_coronatracker_1',
+                radius: 7.0,
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1,
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(54,230,86,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'בית חולים':
+                    return {
+                pane: 'pane_israel_coronatracker_1',
+                radius: 7.0,
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1,
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(129,209,116,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'בית כנסת':
+                    return {
+                pane: 'pane_israel_coronatracker_1',
+                radius: 7.0,
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1,
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(115,186,240,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'בית מלון':
+                    return {
+                pane: 'pane_israel_coronatracker_1',
+                radius: 7.0,
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1,
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(209,194,21,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'בית ספר':
+                    return {
+                pane: 'pane_israel_coronatracker_1',
+                radius: 7.0,
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1,
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(83,113,201,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'בית קפה':
+                    return {
+                pane: 'pane_israel_coronatracker_1',
+                radius: 7.0,
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1,
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(218,24,150,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'בנק':
+                    return {
+                pane: 'pane_israel_coronatracker_1',
+                radius: 7.0,
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1,
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(26,226,190,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'מבנה דת נוצרי':
+                    return {
+                pane: 'pane_israel_coronatracker_1',
+                radius: 7.0,
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1,
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(190,222,83,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'מסחר':
+                    return {
+                pane: 'pane_israel_coronatracker_1',
+                radius: 7.0,
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1,
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(234,130,132,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'מסעדה':
+                    return {
+                pane: 'pane_israel_coronatracker_1',
+                radius: 7.0,
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1,
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(144,229,73,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'מרפאה':
+                    return {
+                pane: 'pane_israel_coronatracker_1',
+                radius: 7.0,
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1,
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(111,219,235,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'סופרמרקט':
+                    return {
+                pane: 'pane_israel_coronatracker_1',
+                radius: 7.0,
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1,
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(228,109,149,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'קולנוע':
+                    return {
+                pane: 'pane_israel_coronatracker_1',
+                radius: 7.0,
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1,
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(234,156,38,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'קניון':
+                    return {
+                pane: 'pane_israel_coronatracker_1',
+                radius: 7.0,
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1,
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(49,211,130,1.0)',
+                interactive: true,
+            }
+                    break;
+                case 'תיאטרון':
+                    return {
+                pane: 'pane_israel_coronatracker_1',
+                radius: 7.0,
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1,
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(226,68,224,1.0)',
+                interactive: true,
+            }
+                    break;
+                default:
+                    return {
+                pane: 'pane_israel_coronatracker_1',
+                radius: 7.0,
+                opacity: 1,
+                color: 'rgba(35,35,35,1.0)',
+                dashArray: '',
+                lineCap: 'butt',
+                lineJoin: 'miter',
+                weight: 1,
+                fill: true,
+                fillOpacity: 1,
+                fillColor: 'rgba(125,72,209,1.0)',
+                interactive: true,
+            }
+                    break;
+            }
+        }
+        map.createPane('pane_israel_coronatracker_1');
+        map.getPane('pane_israel_coronatracker_1').style.zIndex = 401;
+        map.getPane('pane_israel_coronatracker_1').style['mix-blend-mode'] = 'normal';
+        var layer_israel_coronatracker_1 = new L.geoJson(json_israel_coronatracker_1, {
+            attribution: '',
+            interactive: true,
+            dataVar: 'json_israel_coronatracker_1',
+            layerName: 'layer_israel_coronatracker_1',
+            pane: 'pane_israel_coronatracker_1',
+            onEachFeature: pop_israel_coronatracker_1,
+            pointToLayer: function (feature, latlng) {
+                var context = {
+                    feature: feature,
+                    variables: {}
+                };
+                return L.circleMarker(latlng, style_israel_coronatracker_1_0(feature));
+            },
+        });
+        bounds_group.addLayer(layer_israel_coronatracker_1);
+        map.addLayer(layer_israel_coronatracker_1);
+        
+        var baseMaps = {};
+        
+        setBounds();
+        var mapDiv = document.getElementById('map');
+        var row = document.createElement('div');
+        row.className="row";
+        row.id="all";
+        row.style.height = "100%";
+        var col1 = document.createElement('div');
+        col1.className="col9";
+        col1.id = "mapWindow";
+        col1.style.height = "99%";
+        col1.style.width = "80%";
+        col1.style.display = "inline-block";
+        var col2 = document.createElement('div');
+        col2.className="col3";
+        col2.id = "menu";
+        col2.style.display = "inline-block";
+        mapDiv.parentNode.insertBefore(row, mapDiv);
+        document.getElementById("all").appendChild(col1);
+        document.getElementById("all").appendChild(col2);
+        col1.appendChild(mapDiv)
+        var Filters = {"name": "str","type": "str"};
+        function filterFunc() {
+          map.eachLayer(function(lyr){
+          if ("options" in lyr && "dataVar" in lyr["options"]){
+            features = this[lyr["options"]["dataVar"]].features.slice(0);
+            try{
+              for (key in Filters){
+                if (Filters[key] == "str" || Filters[key] == "bool"){
+                  var selection = [];
+                  var options = document.getElementById("sel_" + key).options
+                  for (var i=0; i < options.length; i++) {
+                    if (options[i].selected) selection.push(options[i].value);
+                  }
+                    try{
+                      if (key in features[0].properties){
+                        for (i = features.length - 1;
+                          i >= 0; --i){
+                          if (selection.indexOf(
+                          features[i].properties[key])<0
+                          && selection.length>0) {
+                          features.splice(i,1);
+                          }
+                        }
+                      }
+                    } catch(err){
+                  }
+                }
+                if (Filters[key] == "int"){
+                  sliderVals =  document.getElementById(
+                    "div_" + key).noUiSlider.get();
+                  try{
+                    if (key in features[0].properties){
+                    for (i = features.length - 1; i >= 0; --i){
+                      if (parseInt(features[i].properties[key])
+                          < sliderVals[0]
+                          || parseInt(features[i].properties[key])
+                          > sliderVals[1]){
+                            features.splice(i,1);
+                          }
+                        }
+                      }
+                    } catch(err){
+                    }
+                  }
+                if (Filters[key] == "real"){
+                  sliderVals =  document.getElementById(
+                    "div_" + key).noUiSlider.get();
+                  try{
+                    if (key in features[0].properties){
+                    for (i = features.length - 1; i >= 0; --i){
+                      if (features[i].properties[key]
+                          < sliderVals[0]
+                          || features[i].properties[key]
+                          > sliderVals[1]){
+                            features.splice(i,1);
+                          }
+                        }
+                      }
+                    } catch(err){
+                    }
+                  }
+                if (Filters[key] == "date"
+                  || Filters[key] == "datetime"
+                  || Filters[key] == "time"){
+                  try{
+                    if (key in features[0].properties){
+                      HTMLkey = key.replace(/[&\/\\#,+()$~%.'":*?<>{} ]/g, '');
+                      startdate = document.getElementById("dat_" +
+                        HTMLkey + "_date1").value.replace(" ", "T");
+                      enddate = document.getElementById("dat_" +
+                        HTMLkey + "_date2").value.replace(" ", "T");
+                      for (i = features.length - 1; i >= 0; --i){
+                        if (features[i].properties[key] < startdate
+                          || features[i].properties[key] > enddate){
+                          features.splice(i,1);
+                        }
+                      }
+                    }
+                  } catch(err){
+                  }
+                }
+              }
+            } catch(err){
+            }
+          this[lyr["options"]["layerName"]].clearLayers();
+          this[lyr["options"]["layerName"]].addData(features);
+          }
+          })
+        }
+            document.getElementById("menu").appendChild(
+                document.createElement("div"));
+            var div_name = document.createElement('div');
+            div_name.id = "div_name";
+            div_name.className= "filterselect";
+            document.getElementById("menu").appendChild(div_name);
+            sel_name = document.createElement('select');
+            sel_name.multiple = true;
+            sel_name.size = 10;
+            sel_name.id = "sel_name";
+            var name_options_str = "<option value='' unselected></option>";
+            sel_name.onchange = function(){filterFunc()};
+            name_options_str  += '<option value="חולה 109">חולה 109</option>';
+            name_options_str  += '<option value="חולה 111">חולה 111</option>';
+            name_options_str  += '<option value="חולה 112">חולה 112</option>';
+            name_options_str  += '<option value="חולה 113">חולה 113</option>';
+            name_options_str  += '<option value="חולה 116">חולה 116</option>';
+            name_options_str  += '<option value="חולה 117">חולה 117</option>';
+            name_options_str  += '<option value="חולה 119">חולה 119</option>';
+            name_options_str  += '<option value="חולה 120">חולה 120</option>';
+            name_options_str  += '<option value="חולה 121">חולה 121</option>';
+            name_options_str  += '<option value="חולה 123">חולה 123</option>';
+            name_options_str  += '<option value="חולה 125">חולה 125</option>';
+            name_options_str  += '<option value="חולה 127">חולה 127</option>';
+            name_options_str  += '<option value="חולה 128">חולה 128</option>';
+            name_options_str  += '<option value="חולה 129">חולה 129</option>';
+            name_options_str  += '<option value="חולה 130">חולה 130</option>';
+            name_options_str  += '<option value="חולה 139">חולה 139</option>';
+            name_options_str  += '<option value="חולה 141">חולה 141</option>';
+            name_options_str  += '<option value="חולה 15">חולה 15</option>';
+            name_options_str  += '<option value="חולה 152">חולה 152</option>';
+            name_options_str  += '<option value="חולה 153">חולה 153</option>';
+            name_options_str  += '<option value="חולה 155">חולה 155</option>';
+            name_options_str  += '<option value="חולה 156">חולה 156</option>';
+            name_options_str  += '<option value="חולה 16">חולה 16</option>';
+            name_options_str  += '<option value="חולה 160">חולה 160</option>';
+            name_options_str  += '<option value="חולה 164">חולה 164</option>';
+            name_options_str  += '<option value="חולה 171">חולה 171</option>';
+            name_options_str  += '<option value="חולה 174">חולה 174</option>';
+            name_options_str  += '<option value="חולה 175">חולה 175</option>';
+            name_options_str  += '<option value="חולה 176">חולה 176</option>';
+            name_options_str  += '<option value="חולה 181">חולה 181</option>';
+            name_options_str  += '<option value="חולה 182">חולה 182</option>';
+            name_options_str  += '<option value="חולה 183">חולה 183</option>';
+            name_options_str  += '<option value="חולה 184">חולה 184</option>';
+            name_options_str  += '<option value="חולה 185">חולה 185</option>';
+            name_options_str  += '<option value="חולה 187">חולה 187</option>';
+            name_options_str  += '<option value="חולה 188">חולה 188</option>';
+            name_options_str  += '<option value="חולה 189">חולה 189</option>';
+            name_options_str  += '<option value="חולה 190">חולה 190</option>';
+            name_options_str  += '<option value="חולה 196">חולה 196</option>';
+            name_options_str  += '<option value="חולה 197">חולה 197</option>';
+            name_options_str  += '<option value="חולה 198">חולה 198</option>';
+            name_options_str  += '<option value="חולה 199">חולה 199</option>';
+            name_options_str  += '<option value="חולה 203">חולה 203</option>';
+            name_options_str  += '<option value="חולה 204">חולה 204</option>';
+            name_options_str  += '<option value="חולה 213">חולה 213</option>';
+            name_options_str  += '<option value="חולה 214">חולה 214</option>';
+            name_options_str  += '<option value="חולה 224">חולה 224</option>';
+            name_options_str  += '<option value="חולה 228">חולה 228</option>';
+            name_options_str  += '<option value="חולה 237">חולה 237</option>';
+            name_options_str  += '<option value="חולה 240">חולה 240</option>';
+            name_options_str  += '<option value="חולה 244">חולה 244</option>';
+            name_options_str  += '<option value="חולה 247">חולה 247</option>';
+            name_options_str  += '<option value="חולה 248">חולה 248</option>';
+            name_options_str  += '<option value="חולה 252">חולה 252</option>';
+            name_options_str  += '<option value="חולה 254">חולה 254</option>';
+            name_options_str  += '<option value="חולה 259">חולה 259</option>';
+            name_options_str  += '<option value="חולה 264">חולה 264</option>';
+            name_options_str  += '<option value="חולה 269">חולה 269</option>';
+            name_options_str  += '<option value="חולה 272">חולה 272</option>';
+            name_options_str  += '<option value="חולה 276">חולה 276</option>';
+            name_options_str  += '<option value="חולה 278">חולה 278</option>';
+            name_options_str  += '<option value="חולה 28">חולה 28</option>';
+            name_options_str  += '<option value="חולה 281">חולה 281</option>';
+            name_options_str  += '<option value="חולה 283">חולה 283</option>';
+            name_options_str  += '<option value="חולה 284">חולה 284</option>';
+            name_options_str  += '<option value="חולה 285">חולה 285</option>';
+            name_options_str  += '<option value="חולה 29">חולה 29</option>';
+            name_options_str  += '<option value="חולה 33">חולה 33</option>';
+            name_options_str  += '<option value="חולה 34">חולה 34</option>';
+            name_options_str  += '<option value="חולה 36">חולה 36</option>';
+            name_options_str  += '<option value="חולה 40">חולה 40</option>';
+            name_options_str  += '<option value="חולה 42">חולה 42</option>';
+            name_options_str  += '<option value="חולה 45">חולה 45</option>';
+            name_options_str  += '<option value="חולה 47">חולה 47</option>';
+            name_options_str  += '<option value="חולה 48">חולה 48</option>';
+            name_options_str  += '<option value="חולה 50">חולה 50</option>';
+            name_options_str  += '<option value="חולה 51">חולה 51</option>';
+            name_options_str  += '<option value="חולה 52">חולה 52</option>';
+            name_options_str  += '<option value="חולה 56">חולה 56</option>';
+            name_options_str  += '<option value="חולה 57">חולה 57</option>';
+            name_options_str  += '<option value="חולה 58">חולה 58</option>';
+            name_options_str  += '<option value="חולה 61">חולה 61</option>';
+            name_options_str  += '<option value="חולה 62">חולה 62</option>';
+            name_options_str  += '<option value="חולה 65">חולה 65</option>';
+            name_options_str  += '<option value="חולה 71">חולה 71</option>';
+            name_options_str  += '<option value="חולה 77">חולה 77</option>';
+            name_options_str  += '<option value="חולה 78">חולה 78</option>';
+            name_options_str  += '<option value="חולה 79">חולה 79</option>';
+            name_options_str  += '<option value="חולה 83">חולה 83</option>';
+            name_options_str  += '<option value="חולה 96">חולה 96</option>';
+            name_options_str  += '<option value="חולה 99">חולה 99</option>';
+            name_options_str  += '<option value="מורה ממודיעין">מורה ממודיעין</option>';
+            name_options_str  += '<option value="תיירים בשנות ה22">תיירים בשנות ה22</option>';
+            name_options_str  += '<option value="תיירים בשנות ה23">תיירים בשנות ה23</option>';
+            name_options_str  += '<option value="תיירים בשנות ה24">תיירים בשנות ה24</option>';
+            name_options_str  += '<option value="תיירים בשנות ה25">תיירים בשנות ה25</option>';
+            name_options_str  += '<option value="תיירים בשנות ה26">תיירים בשנות ה26</option>';
+            name_options_str  += '<option value="תיירים בשנות ה27">תיירים בשנות ה27</option>';
+            name_options_str  += '<option value="תיירים בשנות ה28">תיירים בשנות ה28</option>';
+            name_options_str  += '<option value="תיירים בשנות ה29">תיירים בשנות ה29</option>';
+            name_options_str  += '<option value="תיירים בשנות ה30">תיירים בשנות ה30</option>';
+            name_options_str  += '<option value="תיירים בשנות ה31">תיירים בשנות ה31</option>';
+            name_options_str  += '<option value="תיירים בשנות ה32">תיירים בשנות ה32</option>';
+            name_options_str  += '<option value="תיירים בשנות ה33">תיירים בשנות ה33</option>';
+            name_options_str  += '<option value="תיירים בשנות ה34">תיירים בשנות ה34</option>';
+            name_options_str  += '<option value="תיירים בשנות ה35">תיירים בשנות ה35</option>';
+            name_options_str  += '<option value="תיירים בשנות ה36">תיירים בשנות ה36</option>';
+            name_options_str  += '<option value="תיירים בשנות ה37">תיירים בשנות ה37</option>';
+            name_options_str  += '<option value="תיירים בשנות ה38">תיירים בשנות ה38</option>';
+            name_options_str  += '<option value="תיירים בשנות ה39">תיירים בשנות ה39</option>';
+            name_options_str  += '<option value="תיירים בשנות ה40">תיירים בשנות ה40</option>';
+            name_options_str  += '<option value="תיירים בשנות ה41">תיירים בשנות ה41</option>';
+            name_options_str  += '<option value="תיירים בשנות ה42">תיירים בשנות ה42</option>';
+            name_options_str  += '<option value="תיירים מגרמניה">תיירים מגרמניה</option>';
+            sel_name.innerHTML = name_options_str;
+            div_name.appendChild(sel_name);
+            var lab_name = document.createElement('div');
+            lab_name.innerHTML = 'name';
+            lab_name.className = 'filterlabel';
+            div_name.appendChild(lab_name);
+            var reset_name = document.createElement('div');
+            reset_name.innerHTML = 'clear filter';
+            reset_name.className = 'filterlabel';
+            reset_name.onclick = function() {
+                var options = document.getElementById("sel_name").options;
+                for (var i=0; i < options.length; i++) {
+                    options[i].selected = false;
+                }
+                filterFunc();
+            };
+            div_name.appendChild(reset_name);
+            document.getElementById("menu").appendChild(
+                document.createElement("div"));
+            var div_type = document.createElement('div');
+            div_type.id = "div_type";
+            div_type.className= "filterselect";
+            document.getElementById("menu").appendChild(div_type);
+            sel_type = document.createElement('select');
+            sel_type.multiple = true;
+            sel_type.size = 10;
+            sel_type.id = "sel_type";
+            var type_options_str = "<option value='' unselected></option>";
+            sel_type.onchange = function(){filterFunc()};
+            type_options_str  += '<option value="NULL">NULL</option>';
+            type_options_str  += '<option value="אוניברסיטה">אוניברסיטה</option>';
+            type_options_str  += '<option value="אירועים">אירועים</option>';
+            type_options_str  += '<option value="אצטדיון">אצטדיון</option>';
+            type_options_str  += '<option value="אתר תיירות">אתר תיירות</option>';
+            type_options_str  += '<option value="בית חולים">בית חולים</option>';
+            type_options_str  += '<option value="בית כנסת">בית כנסת</option>';
+            type_options_str  += '<option value="בית מלון">בית מלון</option>';
+            type_options_str  += '<option value="בית ספר">בית ספר</option>';
+            type_options_str  += '<option value="בית קפה">בית קפה</option>';
+            type_options_str  += '<option value="בנק">בנק</option>';
+            type_options_str  += '<option value="מבנה דת נוצרי">מבנה דת נוצרי</option>';
+            type_options_str  += '<option value="מסחר">מסחר</option>';
+            type_options_str  += '<option value="מסעדה">מסעדה</option>';
+            type_options_str  += '<option value="מרפאה">מרפאה</option>';
+            type_options_str  += '<option value="סופרמרקט">סופרמרקט</option>';
+            type_options_str  += '<option value="קולנוע">קולנוע</option>';
+            type_options_str  += '<option value="קניון">קניון</option>';
+            type_options_str  += '<option value="תיאטרון">תיאטרון</option>';
+            sel_type.innerHTML = type_options_str;
+            div_type.appendChild(sel_type);
+            var lab_type = document.createElement('div');
+            lab_type.innerHTML = 'type';
+            lab_type.className = 'filterlabel';
+            div_type.appendChild(lab_type);
+            var reset_type = document.createElement('div');
+            reset_type.innerHTML = 'clear filter';
+            reset_type.className = 'filterlabel';
+            reset_type.onclick = function() {
+                var options = document.getElementById("sel_type").options;
+                for (var i=0; i < options.length; i++) {
+                    options[i].selected = false;
+                }
+                filterFunc();
+            };
+            div_type.appendChild(reset_type);
+			
+			
+        </script>
+    </body>
+</html>
